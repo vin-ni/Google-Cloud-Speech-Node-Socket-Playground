@@ -33,40 +33,24 @@ const constraints = {
 
 
 function initRecording() {
-
-	//need to call this directly through the Button on iOS. Otherwise could call this only in getUserMedia
-	AudioContext = window.AudioContext || window.webkitAudioContext;
-	context = new AudioContext();
+	socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
+	AudioContext = window.AudioContext || window.webkitAudioContext;    
+    context = new AudioContext();
+    processor = context.createScriptProcessor(bufferSize, 1, 1);
+	processor.connect(context.destination);
 	context.resume();
 
-	navigator.mediaDevices.getUserMedia(constraints)
-		.then(function (mediaStream) {
-			socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
+    var handleSuccess = function (stream) {
+      input = context.createMediaStreamSource(stream);
+      input.connect(processor);
 
-			// Could call it here if it weren't for iOs
-			// AudioContext = window.AudioContext || window.webkitAudioContext;
-			// context = new AudioContext();
-			// context.resume();
+      processor.onaudioprocess = function (e) {
+		microphoneProcess(e);
+      };
+    };
 
-			processor = context.createScriptProcessor(bufferSize, 1, 1);
-			processor.connect(context.destination);
-
-			console.log(AudioContext);
-			console.log('context Resumed');
-
-			var handleGetUserMediaSuccess = function (stream) {
-				input = context.createMediaStreamSource(stream);
-				input.connect(processor);
-
-				processor.onaudioprocess = function (e) {
-					microphoneProcess(e);
-					// Do something with the data, i.e Convert this to WAV
-				};
-			};
-			navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-				.then(handleGetUserMediaSuccess);
-
-		})
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(handleSuccess);
 }
 
 function microphoneProcess(e) {

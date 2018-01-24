@@ -1,10 +1,7 @@
 {
   "name": "GoogleCloudSpeechPlayground",
   "version": "1.0.0",
-  "description": "Google Cloud Speech Playground with node.js and socket.io
-  //  Created by Vinzenz Aubry for sansho 24.01.17
-  //  Feel free to improve!
-  //	Contact: vinzenz@sansho.studio",
+  "description": "Google Cloud Speech Playground with node.js and socket.io.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
