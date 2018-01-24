@@ -1,5 +1,6 @@
 # Google Cloud Speech Node with Socket Playground
 An easy-to-set-up playground for cross device real-time Google Speech Recognition with a Node server and socket.io.
+![Yo this is a test](yothisisatest.gif "Yo this is a test")
 
 ## run local
 1. get a free test key from [Google](https://cloud.google.com/speech/docs/quickstart ) 
