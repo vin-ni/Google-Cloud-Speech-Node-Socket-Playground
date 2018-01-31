@@ -13,6 +13,7 @@ An easy-to-set-up playground for cross device real-time Google Speech Recognitio
 
 ## run on server
 Same as **run local** `1-4`.
+
 5. config the `.env` Port for a port that you've opened on the server. I'm using 1337 here, too.
 6. go to `your server adress` 
 
