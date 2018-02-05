@@ -14,7 +14,8 @@ let bufferSize = 2048,
 	AudioContext,
 	context,
 	processor,
-	input;
+	input,
+	globalStream;
 
 //vars
 let audioElement = document.querySelector('audio'),
@@ -41,6 +42,7 @@ function initRecording() {
 	context.resume();
 
     var handleSuccess = function (stream) {
+	  globalStream = stream;
       input = context.createMediaStreamSource(stream);
       input.connect(processor);
 
@@ -49,8 +51,9 @@ function initRecording() {
       };
     };
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(handleSuccess);
+navigator.mediaDevices.getUserMedia(constraints)
+	  .then(handleSuccess);
+	  
 }
 
 function microphoneProcess(e) {
@@ -82,19 +85,36 @@ function stopRecording() {
 	// waited for FinalWord
 	startButton.disabled = true;
 	endButton.disabled = true;
-
 	socket.emit('endGoogleCloudStream', '');
+
+
+	let track = globalStream.getTracks()[0];
+	track.stop();
 
 	input.disconnect(processor);
 	processor.disconnect(context.destination);
-	input = null;
-	processor = null;
-	context = null;
-	AudioContext = null;
+	context.close().then(function() {
+		input = null;
+		processor = null;
+		context = null;
+		AudioContext = null;
+		startButton.disabled = false;
+	  });
+
+	// context.close();
+	
 
 	// audiovideostream.stop();
 
-	startButton.disabled = false;
+	// microphone_stream.disconnect(script_processor_node);
+	// script_processor_node.disconnect(audioContext.destination);
+	// microphone_stream = null;
+	// script_processor_node = null;
+
+	// audiovideostream.stop();
+	// videoElement.srcObject = null;
+
+	
 }
 
 //================= SOCKET IO =================
@@ -233,7 +253,7 @@ function addTimeSettingsFinal(speechData) {
 
 window.onbeforeunload = function () {
 	socket.emit('endGoogleCloudStream', '');
-	alert("Window Unload");
+	// alert("Window Unload");
 };
 
 //================= SANTAS HELPERS =================
