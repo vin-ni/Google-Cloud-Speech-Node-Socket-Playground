@@ -57,7 +57,7 @@ io.on('connection', function (client) {
                     (data.results[0] && data.results[0].alternatives[0])
                         ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
                         : `\n\nReached transcription time limit, press Ctrl+C\n`);
-                io.sockets.emit('speechData', data);
+                    client.emit('speechData', data);
             });
     });
 
