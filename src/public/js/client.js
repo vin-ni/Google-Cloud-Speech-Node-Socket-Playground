@@ -21,7 +21,9 @@ let bufferSize = 2048,
 let audioElement = document.querySelector('audio'),
 	finalWord = false,
 	resultText = document.getElementById('ResultText'),
-	removeLastWord = true;
+	removeLastWord = true,
+	streamStreaming = false;
+
 
 //audioStream constraints
 const constraints = {
@@ -35,25 +37,26 @@ const constraints = {
 
 function initRecording() {
 	socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
-	AudioContext = window.AudioContext || window.webkitAudioContext;    
-    context = new AudioContext();
-    processor = context.createScriptProcessor(bufferSize, 1, 1);
+	streamStreaming = true;
+	AudioContext = window.AudioContext || window.webkitAudioContext;
+	context = new AudioContext();
+	processor = context.createScriptProcessor(bufferSize, 1, 1);
 	processor.connect(context.destination);
 	context.resume();
 
-    var handleSuccess = function (stream) {
-	  globalStream = stream;
-      input = context.createMediaStreamSource(stream);
-      input.connect(processor);
+	var handleSuccess = function (stream) {
+		globalStream = stream;
+		input = context.createMediaStreamSource(stream);
+		input.connect(processor);
 
-      processor.onaudioprocess = function (e) {
-		microphoneProcess(e);
-      };
-    };
+		processor.onaudioprocess = function (e) {
+			microphoneProcess(e);
+		};
+	};
 
-navigator.mediaDevices.getUserMedia(constraints)
-	  .then(handleSuccess);
-	  
+	navigator.mediaDevices.getUserMedia(constraints)
+		.then(handleSuccess);
+
 }
 
 function microphoneProcess(e) {
@@ -85,6 +88,7 @@ function stopRecording() {
 	// waited for FinalWord
 	startButton.disabled = true;
 	endButton.disabled = true;
+	streamStreaming = false;
 	socket.emit('endGoogleCloudStream', '');
 
 
@@ -93,16 +97,16 @@ function stopRecording() {
 
 	input.disconnect(processor);
 	processor.disconnect(context.destination);
-	context.close().then(function() {
+	context.close().then(function () {
 		input = null;
 		processor = null;
 		context = null;
 		AudioContext = null;
 		startButton.disabled = false;
-	  });
+	});
 
 	// context.close();
-	
+
 
 	// audiovideostream.stop();
 
@@ -114,7 +118,7 @@ function stopRecording() {
 	// audiovideostream.stop();
 	// videoElement.srcObject = null;
 
-	
+
 }
 
 //================= SOCKET IO =================
@@ -252,8 +256,7 @@ function addTimeSettingsFinal(speechData) {
 }
 
 window.onbeforeunload = function () {
-	socket.emit('endGoogleCloudStream', '');
-	// alert("Window Unload");
+	if (streamStreaming) { socket.emit('endGoogleCloudStream', ''); }
 };
 
 //================= SANTAS HELPERS =================
