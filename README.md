@@ -17,6 +17,6 @@ Same as **run local** `1-4`.
 5. config the `.env` Port for a port that you've opened on the server. I'm using 1337 here, too.
 6. go to `your server adress` 
 
-I recommend using [pm2](http://pm2.keymetrics.io/) or something similar, to keep the process running even when close the connection. 
+I recommend using [pm2](http://pm2.keymetrics.io/) or something similar, to keep the process running even when closing the terminal connection. 
 
 Made by [Vinzenz Aubry](https://twitter.com/vinberto) 
