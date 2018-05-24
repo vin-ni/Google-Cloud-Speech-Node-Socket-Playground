@@ -50,20 +50,11 @@ io.on('connection', function (client) {
     });
 
     client.on('startGoogleCloudStream', function (data) {
-        recognizeStream = speech.streamingRecognize(request)
-            .on('error', console.error)
-            .on('data', (data) => {
-                process.stdout.write(
-                    (data.results[0] && data.results[0].alternatives[0])
-                        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-                        : `\n\nReached transcription time limit, press Ctrl+C\n`);
-                    client.emit('speechData', data);
-            });
+        startRecognitionStream(this, data);
     });
 
     client.on('endGoogleCloudStream', function (data) {
-        recognizeStream.end();
-        recognizeStream = null;
+        stopRecognitionStream();
     });
 
     client.on('binaryData', function (data) {
@@ -72,6 +63,33 @@ io.on('connection', function (client) {
             recognizeStream.write(data);
         }
     });
+
+    function startRecognitionStream(client, data) {
+        recognizeStream = speech.streamingRecognize(request)
+            .on('error', console.error)
+            .on('data', (data) => {
+                process.stdout.write(
+                    (data.results[0] && data.results[0].alternatives[0])
+                        ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
+                        : `\n\nReached transcription time limit, press Ctrl+C\n`);
+                client.emit('speechData', data);
+
+                // if end of utterance, let's restart stream
+                // this is a small hack. After 65 seconds of silence, the stream will still throw an error for speech length limit
+                if (data.results[0] && data.results[0].isFinal) {
+                    stopRecognitionStream();
+                    startRecognitionStream(client);
+                    // console.log('restarted stream serverside');
+                }
+            });
+    }
+
+    function stopRecognitionStream() {
+        if (recognizeStream) {
+            recognizeStream.end();
+        }
+        recognizeStream = null;
+    }
 });
 
 
