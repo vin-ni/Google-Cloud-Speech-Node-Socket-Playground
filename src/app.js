@@ -10,8 +10,9 @@ const fs = require('fs');
 const environmentVars = require('dotenv').config();
 
 // Google Cloud
-const Speech = require('@google-cloud/speech');
-const speech = Speech(); // Instantiates a client
+const speech = require('@google-cloud/speech');
+const speechClient = new speech.SpeechClient(); // Creates a client
+
 
 const app = express();
 const port = process.env.PORT || 1337;
@@ -65,7 +66,7 @@ io.on('connection', function (client) {
     });
 
     function startRecognitionStream(client, data) {
-        recognizeStream = speech.streamingRecognize(request)
+        recognizeStream = speechClient.streamingRecognize(request)
             .on('error', console.error)
             .on('data', (data) => {
                 process.stdout.write(
