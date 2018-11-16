@@ -21,7 +21,7 @@ let bufferSize = 2048,
 let audioElement = document.querySelector('audio'),
 	finalWord = false,
 	resultText = document.getElementById('ResultText'),
-	removeLastWord = true,
+	removeLastSentence = true,
 	streamStreaming = false;
 
 
@@ -77,18 +77,21 @@ var endButton = document.getElementById("stopRecButton");
 endButton.addEventListener("click", stopRecording);
 endButton.disabled = true;
 
+var recordingStatus = document.getElementById("recordingStatus");
 
 
 function startRecording() {
 	startButton.disabled = true;
-	endButton.disabled = true;
+	endButton.disabled = false;
+	recordingStatus.style.visibility = "visible";
 	initRecording();
 }
 
 function stopRecording() {
 	// waited for FinalWord
-	startButton.disabled = true;
+	startButton.disabled = false;
 	endButton.disabled = true;
+	recordingStatus.style.visibility = "hidden";
 	streamStreaming = false;
 	socket.emit('endGoogleCloudStream', '');
 
@@ -118,8 +121,6 @@ function stopRecording() {
 
 	// audiovideostream.stop();
 	// videoElement.srcObject = null;
-
-
 }
 
 //================= SOCKET IO =================
@@ -139,8 +140,8 @@ socket.on('speechData', function (data) {
 
 	if (dataFinal === false) {
 		// console.log(resultText.lastElementChild);
-		if (removeLastWord) { resultText.lastElementChild.remove(); }
-		removeLastWord = true;
+		if (removeLastSentence) { resultText.lastElementChild.remove(); }
+		removeLastSentence = true;
 
 		//add empty span
 		let empty = document.createElement('span');
@@ -164,15 +165,22 @@ socket.on('speechData', function (data) {
 		//add children to empty span
 		let edit = addTimeSettingsFinal(data);
 		for (var i = 0; i < edit.length; i++) {
+			if (i === 0) {
+				edit[i].innerText = capitalize(edit[i].innerText)
+			}
 			resultText.lastElementChild.appendChild(edit[i]);
-			resultText.lastElementChild.appendChild(document.createTextNode('\u00A0'));
+
+			if (i !== edit.length - 1) {
+				resultText.lastElementChild.appendChild(document.createTextNode('\u00A0'));
+			}
 		}
+		resultText.lastElementChild.appendChild(document.createTextNode('\u002E\u00A0'));
 
 		console.log("Google Speech sent 'final' Sentence.");
 		finalWord = true;
 		endButton.disabled = false;
 
-		removeLastWord = false;
+		removeLastSentence = false;
 	}
 });
 
@@ -300,4 +308,11 @@ var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
         offsetBuffer = nextOffsetBuffer;
     }
     return result.buffer;
+}
+
+function capitalize(s) {
+	if (s.length < 1) {
+		return s;
+	}
+	return s.charAt(0).toUpperCase() + s.slice(1);
 }
