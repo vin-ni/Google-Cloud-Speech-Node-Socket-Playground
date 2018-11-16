@@ -36,6 +36,31 @@ audio {
     opacity: 0.4;
 }
 
+@-webkit-keyframes redGlow {
+  from {
+    background-color: #8c190a;
+    -webkit-box-shadow: 0 0 9px #9c291a;
+  }
+  50% {
+    background-color: #9c291a;
+    -webkit-box-shadow: 0 0 18px #bdb5b4;
+  }
+  to {
+    background-color: #8c190a;
+    -webkit-box-shadow: 0 0 9px #9c291a;
+  }
+}
+#recordingStatus {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 20px;
+  visibility: hidden;
+  -webkit-animation-name: redGlow;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+}
+
 #ResultText {
     width: 80vw;
 }
