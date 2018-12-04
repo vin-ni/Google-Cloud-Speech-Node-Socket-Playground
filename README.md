@@ -38,3 +38,6 @@ The client application highlights different parts of speech, such as nouns and v
 ## Socket Connection
 
 The client communicates with the server using [Socket.io](https://socket.io).
+
+## Troubleshooting
+- If you have delays in calls, check if `IPV6` is disabled on your server
