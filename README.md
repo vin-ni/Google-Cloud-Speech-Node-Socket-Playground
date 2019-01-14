@@ -43,9 +43,9 @@ The client application highlights different parts of speech, such as nouns and v
 
 The client communicates with the server using [Socket.io](https://socket.io).
 
+## Troubleshooting
+- If you have delays in calls, check if `IPV6` is disabled on your server
+
 # Super Reduced Version for Devs
 
 There is now a super reduced log only verison. It show's only two buttons, logs the results to the console and has no nlp. Use this if you want to implement it somewhere else.
-
-## Troubleshooting
-- If you have delays in calls, check if `IPV6` is disabled on your server
