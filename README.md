@@ -43,7 +43,7 @@ The client application highlights different parts of speech, such as nouns and v
 
 The client communicates with the server using [Socket.io](https://socket.io).
 
-## Log Only Version vor Devs
+# Super Reduced Version for Devs
 
 There is now a super reduced log only verison. It show's only two buttons, logs the results to the console and has no nlp. Use this if you want to implement it somewhere else.
 
