@@ -23,8 +23,6 @@ Same as **run local** `1-4`.
 I recommend using [pm2](http://pm2.keymetrics.io/) or something similar, to keep the process running even when closing the terminal connection.
 
 ## Examples
-Made by [Vinzenz Aubry](https://twitter.com/vinberto)
-
 - Speech Recognition controlled Face Filter: [Christmas Card](https://xmas.humanfoundry.com/)
 - Face Filter / Analyzer with Speech Recognition: [I Love You Trainer](http://iloveyoutrainer.com)
 
@@ -56,3 +54,5 @@ The client communicates with the server using [Socket.io](https://socket.io).
 # Super Reduced Version for Devs
 
 There is now a super reduced log only verison. It show's only two buttons, logs the results to the console and has no nlp. Use this if you want to implement it somewhere else.
+
+Made by [Vinzenz Aubry](https://twitter.com/vinberto)
