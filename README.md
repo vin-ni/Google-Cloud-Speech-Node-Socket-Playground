@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An easy-to-set-up playground for cross device real-time Google Speech Recognition with a Node server and socket.io.
+An easy-to-set-up playground for cross device real-time Google Speech Recognition with a Node server and socket.io. *(Inhale)*
 
 ![Yo this is a test](example.gif "example gif")
 
