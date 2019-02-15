@@ -22,7 +22,11 @@ Same as **run local** `1-4`.
 
 I recommend using [pm2](http://pm2.keymetrics.io/) or something similar, to keep the process running even when closing the terminal connection.
 
+## Examples
 Made by [Vinzenz Aubry](https://twitter.com/vinberto)
+
+- Speech Recognition controlled Face Filter: [Christmas Card](https://xmas.humanfoundry.com/)
+- Face Filter / Analyzer with Speech Recognition: [I Love You Trainer](http://iloveyoutrainer.com)
 
 ## Config
 
