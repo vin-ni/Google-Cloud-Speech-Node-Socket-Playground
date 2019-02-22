@@ -6,3 +6,4 @@ src/.DS_Store
 src/.env
 src/SpeechSalary-d1a6920dcea3.json
 srcLogOnly/config.codekit3
+.DS_Store
