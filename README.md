@@ -30,6 +30,8 @@ I recommend using [pm2](http://pm2.keymetrics.io/) or something similar, to keep
 
 It's possible to set a recognition context / add misunderstood words for better recognition results in the app.js `request` params. For more details on the configuration, go [here](https://cloud.google.com/speech-to-text/docs/reference/rest/v1/RecognitionConfig#SpeechContext).
 
+For other languages than english, look up your [language code](https://cloud.google.com/speech-to-text/docs/languages).
+
 ## How Does the Client Process the Stream?
 
 Google Cloud sends intermittent responses to the uploaded audio stream. Each response
