@@ -39,7 +39,10 @@ function initRecording() {
 	socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
 	streamStreaming = true;
 	AudioContext = window.AudioContext || window.webkitAudioContext;
-	context = new AudioContext();
+	context = new AudioContext({
+		// if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
+		latencyHint: 'interactive',
+	});
 	processor = context.createScriptProcessor(bufferSize, 1, 1);
 	processor.connect(context.destination);
 	context.resume();
@@ -284,30 +287,30 @@ function convertFloat32ToInt16(buffer) {
 }
 
 var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
-    if (outSampleRate == sampleRate) {
-        return buffer;
-    }
-    if (outSampleRate > sampleRate) {
-        throw "downsampling rate show be smaller than original sample rate";
-    }
-    var sampleRateRatio = sampleRate / outSampleRate;
-    var newLength = Math.round(buffer.length / sampleRateRatio);
-    var result = new Int16Array(newLength);
-    var offsetResult = 0;
-    var offsetBuffer = 0;
-    while (offsetResult < result.length) {
-        var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
-        var accum = 0, count = 0;
-        for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
-            accum += buffer[i];
-            count++;
-        }
+	if (outSampleRate == sampleRate) {
+		return buffer;
+	}
+	if (outSampleRate > sampleRate) {
+		throw "downsampling rate show be smaller than original sample rate";
+	}
+	var sampleRateRatio = sampleRate / outSampleRate;
+	var newLength = Math.round(buffer.length / sampleRateRatio);
+	var result = new Int16Array(newLength);
+	var offsetResult = 0;
+	var offsetBuffer = 0;
+	while (offsetResult < result.length) {
+		var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+		var accum = 0, count = 0;
+		for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+			accum += buffer[i];
+			count++;
+		}
 
-        result[offsetResult] = Math.min(1, accum / count)*0x7FFF;
-        offsetResult++;
-        offsetBuffer = nextOffsetBuffer;
-    }
-    return result.buffer;
+		result[offsetResult] = Math.min(1, accum / count) * 0x7FFF;
+		offsetResult++;
+		offsetBuffer = nextOffsetBuffer;
+	}
+	return result.buffer;
 }
 
 function capitalize(s) {

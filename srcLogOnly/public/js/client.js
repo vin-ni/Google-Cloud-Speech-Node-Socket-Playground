@@ -44,7 +44,10 @@ function initRecording() {
 	socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
 	streamStreaming = true;
 	AudioContext = window.AudioContext || window.webkitAudioContext;
-	context = new AudioContext();
+	context = new AudioContext({
+		// if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
+		latencyHint: 'interactive',
+	});
 	processor = context.createScriptProcessor(bufferSize, 1, 1);
 	processor.connect(context.destination);
 	context.resume();
