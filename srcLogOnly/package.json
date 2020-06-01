@@ -9,11 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/speech": "2.1.1",
+    "@google-cloud/speech": "^3.6.0",
     "dotenv": "^4.0.0",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "nodemon": "^1.18.9",
+    "nodemon": "^2.0.4",
     "path": "^0.12.7",
     "socket.io": "^2.0.4"
   }

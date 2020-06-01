@@ -7,3 +7,4 @@ src/.env
 srcLogOnly/config.codekit3
 .DS_Store
 *.json
+srcLogOnly/node_modules
