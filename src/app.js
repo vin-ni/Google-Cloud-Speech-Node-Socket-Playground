@@ -3,7 +3,7 @@
 //  Google Cloud Speech Playground with node.js and socket.io
 //  Created by Vinzenz Aubry for sansho 24.01.17
 //  Feel free to improve!
-//	Contact: vinzenz@sansho.studio
+//	Contact: v@vinzenzaubry.com
 
 const express = require('express'); // const bodyParser = require('body-parser'); // const path = require('path');
 const environmentVars = require('dotenv').config();
