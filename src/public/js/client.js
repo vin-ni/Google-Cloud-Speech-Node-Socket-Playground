@@ -32,7 +32,7 @@ const constraints = {
 
 //================= RECORDING =================
 
-function initRecording() {
+async function initRecording() {
   socket.emit('startGoogleCloudStream', ''); //init socket Google Speech Connection
   streamStreaming = true;
   AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -40,28 +40,27 @@ function initRecording() {
     // if Non-interactive, use 'playback' or 'balanced' // https://developer.mozilla.org/en-US/docs/Web/API/AudioContextLatencyCategory
     latencyHint: 'interactive',
   });
-  processor = context.createScriptProcessor(bufferSize, 1, 1);
-  processor.connect(context.destination);
+
+  await context.audioWorklet.addModule('./assets/js/recorderWorkletProcessor.js')
   context.resume();
-
-  var handleSuccess = function (stream) {
-    globalStream = stream;
-    input = context.createMediaStreamSource(stream);
-    input.connect(processor);
-
-    processor.onaudioprocess = function (e) {
-      microphoneProcess(e);
-    };
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess);
+  
+  globalStream = await navigator.mediaDevices.getUserMedia(constraints)
+  input = context.createMediaStreamSource(globalStream)
+  processor = new window.AudioWorkletNode(
+    context,
+    'recorder.worklet'
+  );
+  processor.connect(context.destination);
+  context.resume()
+  input.connect(processor)
+  processor.port.onmessage = (e) => {
+    const audioData = e.data;
+    microphoneProcess(audioData)
+  }
 }
 
-function microphoneProcess(e) {
-  var left = e.inputBuffer.getChannelData(0);
-  // var left16 = convertFloat32ToInt16(left); // old 32 to 16 function
-  var left16 = downsampleBuffer(left, 44100, 16000);
-  socket.emit('binaryData', left16);
+function microphoneProcess(buffer) {
+  socket.emit('binaryData', buffer);
 }
 
 //================= INTERFACE =================
@@ -281,34 +280,6 @@ function convertFloat32ToInt16(buffer) {
   }
   return buf.buffer;
 }
-
-var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
-  if (outSampleRate == sampleRate) {
-    return buffer;
-  }
-  if (outSampleRate > sampleRate) {
-    throw 'downsampling rate show be smaller than original sample rate';
-  }
-  var sampleRateRatio = sampleRate / outSampleRate;
-  var newLength = Math.round(buffer.length / sampleRateRatio);
-  var result = new Int16Array(newLength);
-  var offsetResult = 0;
-  var offsetBuffer = 0;
-  while (offsetResult < result.length) {
-    var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
-    var accum = 0,
-      count = 0;
-    for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
-      accum += buffer[i];
-      count++;
-    }
-
-    result[offsetResult] = Math.min(1, accum / count) * 0x7fff;
-    offsetResult++;
-    offsetBuffer = nextOffsetBuffer;
-  }
-  return result.buffer;
-};
 
 function capitalize(s) {
   if (s.length < 1) {
